@@ -7,25 +7,12 @@ import 'package:flutter/widgets.dart';
 import 'CallConstants.dart';
 
 class StringeeVideoView extends StatefulWidget {
-  final String callId;
-  bool isLocal = true;
-  bool isOverlay = false;
-  bool isMirror = false;
-  final EdgeInsetsGeometry margin;
-  final AlignmentGeometry alignment;
-  final EdgeInsetsGeometry padding;
-  final ScalingType scalingType;
-  final double height;
-  final double width;
-  final Color color;
-  final Widget child;
-
   StringeeVideoView({
-    Key key,
-    @required this.callId,
-    @required this.isLocal,
-    @required this.isOverlay,
-    this.isMirror,
+    Key? key,
+    required this.callId,
+    this.isLocal = true,
+    this.isOverlay = false,
+    this.isMirror = false,
     this.color,
     this.height,
     this.width,
@@ -37,6 +24,19 @@ class StringeeVideoView extends StatefulWidget {
   })  : assert(margin == null || margin.isNonNegative),
         assert(padding == null || padding.isNonNegative),
         super(key: key);
+
+  final String callId;
+  final bool isLocal;
+  final bool isOverlay;
+  final bool isMirror;
+  final EdgeInsetsGeometry? margin;
+  final AlignmentGeometry? alignment;
+  final EdgeInsetsGeometry? padding;
+  final ScalingType? scalingType;
+  final double? height;
+  final double? width;
+  final Color? color;
+  final Widget? child;
 
   @override
   StringeeVideoViewState createState() => StringeeVideoViewState();
@@ -51,10 +51,9 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
-    creationParams = {
+    creationParams = <String, dynamic>{
       'callId': widget.callId,
       'isLocal': widget.isLocal,
       'isOverlay': widget.isOverlay,
@@ -62,19 +61,18 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
 
     switch (widget.scalingType) {
       case ScalingType.SCALE_ASPECT_FILL:
-        creationParams['scalingType'] = "FILL";
+        creationParams['scalingType'] = 'FILL';
         break;
       case ScalingType.SCALE_ASPECT_FIT:
-        creationParams['scalingType'] = "FIT";
+        creationParams['scalingType'] = 'FIT';
         break;
       default:
-        creationParams['scalingType'] = "BALANCED";
+        creationParams['scalingType'] = 'BALANCED';
         break;
     }
 
     if (Platform.isAndroid) {
-      creationParams['isMirror'] =
-          widget.isMirror == null ? false : widget.isMirror;
+      creationParams['isMirror'] = widget.isMirror;
     }
   }
 
@@ -85,7 +83,7 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
           viewType: viewType,
           surfaceFactory:
               (BuildContext context, PlatformViewController controller) {
-            return AndroidViewSurface(
+            return PlatformViewSurface(
               controller: controller,
               gestureRecognizers: const <
                   Factory<OneSequenceGestureRecognizer>>{},
@@ -98,13 +96,12 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
               viewType: viewType,
               layoutDirection: TextDirection.rtl,
               creationParams: creationParams,
-              creationParamsCodec: StandardMessageCodec(),
+              creationParamsCodec: const StandardMessageCodec(),
             )
               ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
               ..create();
           },
         );
-        break;
       case TargetPlatform.iOS:
         return UiKitView(
           viewType: viewType,
@@ -112,16 +109,14 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
           creationParams: creationParams,
           creationParamsCodec: const StandardMessageCodec(),
         );
-        break;
       default:
-        throw UnsupportedError("Unsupported platform view");
-        break;
+        throw UnsupportedError('Unsupported platform view');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> childrenWidget = <Widget>[];
+    final List<Widget> childrenWidget = <Widget>[];
     childrenWidget.add(createVideoView());
 
     Widget current = Container(
@@ -135,17 +130,17 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
     );
 
     if (widget.child != null) {
-      Widget child = widget.child;
+      Widget child = widget.child!;
 
       if (widget.padding != null) {
-        child = Padding(padding: widget.padding, child: child);
+        child = Padding(padding: widget.padding!, child: child);
       }
 
       childrenWidget.add(child);
     }
 
     if (widget.alignment != null) {
-      current = Align(alignment: widget.alignment, child: current);
+      current = Align(alignment: widget.alignment!, child: current);
     }
 
     return current;

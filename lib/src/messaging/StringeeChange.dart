@@ -5,21 +5,21 @@ import 'Message.dart';
 class StringeeObject {}
 
 class StringeeChange {
-  ChangeType _type;
-  ObjectType _objectType;
-  StringeeObject _object;
-
-  StringeeChange(ChangeType type, StringeeObject _object) {
-    this._type = type;
-    this._object = _object;
-    _objectType = getType(_object);
+  StringeeChange(ChangeType type, StringeeObject object) {
+    _type = type;
+    _object = object;
+    _objectType = getType(object);
   }
 
-  StringeeObject get object => _object;
+  ChangeType? _type;
+  ObjectType? _objectType;
+  StringeeObject? _object;
 
-  ObjectType get objectType => _objectType;
+  StringeeObject? get object => _object;
 
-  ChangeType get changeType => _type;
+  ObjectType? get objectType => _objectType;
+
+  ChangeType? get changeType => _type;
 
   ObjectType getType(StringeeObject object) {
     if (object is Conversation) {
@@ -27,7 +27,7 @@ class StringeeChange {
     } else if (object is Message) {
       return ObjectType.MESSAGE;
     } else {
-      throw new ArgumentError("Invalid object type: " + object.toString());
+      throw ArgumentError('Invalid object type: $object');
     }
   }
 }
