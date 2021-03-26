@@ -32,11 +32,11 @@ class Conversation implements StringeeObject {
     _lastMsg = LastMsg(convInfor['lastMsg']);
     _pinnedMsgId = convInfor['pinnedMsgId'];
 
-    final List<User> participants = <User>[];
+    final List<StringeeUser> participants = <StringeeUser>[];
     final List<dynamic> participantArray =
         json.decode(convInfor['participants']);
     for (int i = 0; i < participantArray.length; i++) {
-      final User user = User.fromJson(participantArray[i]);
+      final StringeeUser user = StringeeUser.fromJson(participantArray[i]);
       participants.add(user);
     }
     _participants = participants;
@@ -63,7 +63,7 @@ class Conversation implements StringeeObject {
   MsgState? _lastMsgState;
   LastMsg? _lastMsg;
   String? _pinnedMsgId;
-  List<User>? _participants;
+  List<StringeeUser>? _participants;
 
   String? get id => _id;
 
@@ -107,7 +107,7 @@ class Conversation implements StringeeObject {
 
   String? get pinnedMsgId => _pinnedMsgId;
 
-  List<User>? get participants => _participants;
+  List<StringeeUser>? get participants => _participants;
 
   Future<Map<dynamic, dynamic>> delete(String clientId) async {
     return await StringeeClient.methodChannel

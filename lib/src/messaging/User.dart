@@ -1,11 +1,11 @@
-class User {
-  User(
+class StringeeUser {
+  StringeeUser(
     this._userId,
     this._name,
     this._avatarUrl,
   );
 
-  User.fromJson(Map<dynamic, dynamic> json) {
+  StringeeUser.fromJson(Map<dynamic, dynamic> json) {
     _userId = json['userId'];
     _name = json['name'];
     _avatarUrl = json['avatarUrl'];
