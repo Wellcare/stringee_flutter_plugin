@@ -2,52 +2,53 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
 
-StringeeCall? _stringeeCall;
-StringeeCall2? _stringeeCall2;
+StringeeCall _stringeeCall;
+StringeeCall2 _stringeeCall2;
 
 class Call extends StatefulWidget {
-  const Call({
-    Key? key,
-    required this.fromUserId,
-    required this.toUserId,
-    this.showIncomingUi = false,
-    this.isVideoCall = false,
+  StringeeCall incomingCall;
+  StringeeCall2 incomingCall2;
+  final String toUserId;
+  final String fromUserId;
+  String callId;
+  StringeeObjectEventType callType;
+  bool showIncomingUi = false;
+  bool hasLocalStream = false;
+  bool hasRemoteStream = false;
+  bool isVideoCall = false;
+  bool isSpeaker = false;
+  bool isResumeVideo = false;
+  bool isMirror = true;
+
+  Call({
+    Key key,
+    @required this.fromUserId,
+    @required this.toUserId,
+    @required this.showIncomingUi,
+    @required this.isVideoCall,
     this.callType,
     this.incomingCall2,
     this.incomingCall,
   }) : super(key: key);
 
-  final StringeeCall? incomingCall;
-  final StringeeCall2? incomingCall2;
-  final String toUserId;
-  final String fromUserId;
-  final StringeeType? callType;
-  final bool showIncomingUi;
-  final bool isVideoCall;
-
   @override
   State<StatefulWidget> createState() {
+    // TODO: implement createState
     return _CallState();
   }
 }
 
 class _CallState extends State<Call> {
-  String? _callId;
-  String _status = '';
-  bool _isSpeaker = false;
-  bool _hasLocalStream = false;
-  bool _hasRemoteStream = false;
-  late bool _showIncomingUi;
-  final bool _isMirror = true;
+  String status = "";
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
 
-    _showIncomingUi = widget.showIncomingUi;
-    _isSpeaker = widget.isVideoCall;
+    widget.isSpeaker = widget.isVideoCall;
 
-    if (widget.callType == StringeeType.StringeeCall) {
+    if (widget.callType == StringeeObjectEventType.call) {
       _makeOrInitAnswerCall();
     } else {
       _makeOrInitAnswerCall2();
@@ -56,27 +57,29 @@ class _CallState extends State<Call> {
 
   @override
   Widget build(BuildContext context) {
-    final Widget _nameCalling = Container(
+    Widget NameCalling = new Container(
       alignment: Alignment.topCenter,
-      padding: const EdgeInsets.only(top: 120.0),
-      child: Column(
+      padding: EdgeInsets.only(top: 120.0),
+      child: new Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Container(
-            padding: const EdgeInsets.only(bottom: 15.0),
-            child: Text(
-              '${widget.toUserId}',
-              style: const TextStyle(
+          new Container(
+            alignment: Alignment.center,
+            padding: EdgeInsets.only(bottom: 15.0),
+            child: new Text(
+              "${widget.toUserId}",
+              style: new TextStyle(
                 color: Colors.white,
                 fontSize: 35.0,
               ),
             ),
           ),
-          Container(
-            child: Text(
-              _status,
-              style: const TextStyle(
+          new Container(
+            alignment: Alignment.center,
+            child: new Text(
+              '${status}',
+              style: new TextStyle(
                 color: Colors.white,
                 fontSize: 20.0,
               ),
@@ -86,18 +89,18 @@ class _CallState extends State<Call> {
       ),
     );
 
-    final Widget _bottomContainer = Container(
-      padding: const EdgeInsets.only(bottom: 30.0),
+    Widget BottomContainer = new Container(
+      padding: EdgeInsets.only(bottom: 30.0),
       alignment: Alignment.bottomCenter,
-      child: Column(
+      child: new Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: _showIncomingUi
+          children: widget.showIncomingUi
               ? <Widget>[
-                  Row(
+                  new Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
-                      GestureDetector(
+                      new GestureDetector(
                         onTap: _rejectCallTapped,
                         child: Image.asset(
                           'images/end.png',
@@ -105,7 +108,7 @@ class _CallState extends State<Call> {
                           width: 75.0,
                         ),
                       ),
-                      GestureDetector(
+                      new GestureDetector(
                         onTap: _acceptCallTapped,
                         child: Image.asset(
                           'images/answer.png',
@@ -117,17 +120,17 @@ class _CallState extends State<Call> {
                   )
                 ]
               : <Widget>[
-                  Row(
+                  new Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      ButtonSpeaker(isSpeaker: widget.isVideoCall),
-                      const ButtonMicro(isMute: false),
-                      ButtonVideo(isVideoEnable: widget.isVideoCall),
+                      new ButtonSpeaker(isSpeaker: widget.isVideoCall),
+                      new ButtonMicro(isMute: false),
+                      new ButtonVideo(isVideoEnable: widget.isVideoCall),
                     ],
                   ),
-                  Container(
-                    padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
-                    child: GestureDetector(
+                  new Container(
+                    padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+                    child: new GestureDetector(
                       onTap: _endCallTapped,
                       child: Image.asset(
                         'images/end.png',
@@ -139,112 +142,112 @@ class _CallState extends State<Call> {
                 ]),
     );
 
-    final Widget localView = (_hasLocalStream && _callId != null)
-        ? StringeeVideoView(
+    Widget localView = (widget.hasLocalStream)
+        ? new StringeeVideoView(
+            widget.callId,
+            true,
             color: Colors.white,
             alignment: Alignment.topRight,
-            callId: _callId!,
-            isLocal: true,
             isOverlay: true,
-            isMirror: _isMirror,
-            margin: const EdgeInsets.only(top: 100.0, right: 25.0),
+            isMirror: widget.isMirror,
+            margin: EdgeInsets.only(top: 100.0, right: 25.0),
             height: 200.0,
             width: 150.0,
+            scalingType: ScalingType.fill,
           )
-        : const Placeholder();
+        : Placeholder();
 
-    final Widget remoteView = (_hasRemoteStream && _callId != null)
-        ? StringeeVideoView(
+    Widget remoteView = (widget.hasRemoteStream)
+        ? new StringeeVideoView(
+            widget.callId,
+            false,
             color: Colors.blue,
-            callId: _callId!,
-            isLocal: false,
             isOverlay: false,
             isMirror: false,
-            scalingType: ScalingType.SCALE_ASPECT_FIT,
+            scalingType: ScalingType.fill,
           )
-        : const Placeholder();
+        : Placeholder();
 
-    return Scaffold(
+    return new Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
+      body: new Stack(
         children: <Widget>[
           remoteView,
           localView,
-          _nameCalling,
-          _bottomContainer,
+          NameCalling,
+          BottomContainer,
           ButtonSwitchCamera(
-            isMirror: _isMirror,
+            isMirror: widget.isMirror,
           ),
         ],
       ),
     );
   }
 
-  Future<void> _makeOrInitAnswerCall() async {
+  Future _makeOrInitAnswerCall() async {
     // Gán cuộc gọi đến cho biến global
     _stringeeCall = widget.incomingCall;
 
-    if (!_showIncomingUi) {
+    if (!widget.showIncomingUi) {
       _stringeeCall = StringeeCall();
     }
 
     // Listen events
-    _stringeeCall!.eventStreamController.stream.listen((dynamic event) {
-      final Map<dynamic, dynamic> map = event;
-      if (map['typeEvent'] == StringeeCallEvents) {
-        switch (map['eventType']) {
-          case StringeeCallEvents.DidChangeSignalingState:
-            handleSignalingStateChangeEvent(map['body']);
-            break;
-          case StringeeCallEvents.DidChangeMediaState:
-            handleMediaStateChangeEvent(map['body']);
-            break;
-          case StringeeCallEvents.DidReceiveCallInfo:
-            handleReceiveCallInfoEvent(map['body']);
-            break;
-          case StringeeCallEvents.DidHandleOnAnotherDevice:
-            handleHandleOnAnotherDeviceEvent(map['body']);
-            break;
-          case StringeeCallEvents.DidReceiveLocalStream:
-            handleReceiveLocalStreamEvent(map['body']);
-            break;
-          case StringeeCallEvents.DidReceiveRemoteStream:
-            handleReceiveRemoteStreamEvent(map['body']);
-            break;
-          case StringeeCallEvents.DidChangeAudioDevice:
-            if (Platform.isAndroid) {
-              handleChangeAudioDeviceEvent(
-                  map['selectedAudioDevice'], _stringeeCall!, null);
-            }
-            break;
-          default:
-            break;
-        }
+    _stringeeCall.eventStreamController.stream.listen((event) {
+      Map<dynamic, dynamic> map = event;
+      print("Call " + map.toString());
+      switch (map['eventType']) {
+        case StringeeCallEvents.didChangeSignalingState:
+          handleSignalingStateChangeEvent(map['body']);
+          break;
+        case StringeeCallEvents.didChangeMediaState:
+          handleMediaStateChangeEvent(map['body']);
+          break;
+        case StringeeCallEvents.didReceiveCallInfo:
+          handleReceiveCallInfoEvent(map['body']);
+          break;
+        case StringeeCallEvents.didHandleOnAnotherDevice:
+          handleHandleOnAnotherDeviceEvent(map['body']);
+          break;
+        case StringeeCallEvents.didReceiveLocalStream:
+          handleReceiveLocalStreamEvent(map['body']);
+          break;
+        case StringeeCallEvents.didReceiveRemoteStream:
+          handleReceiveRemoteStreamEvent(map['body']);
+          break;
+        case StringeeCallEvents.didChangeAudioDevice:
+          if (Platform.isAndroid) {
+            handleChangeAudioDeviceEvent(
+                map['selectedAudioDevice'], _stringeeCall, null);
+          }
+          break;
+        default:
+          break;
       }
     });
 
-    if (_showIncomingUi) {
-      _stringeeCall!.initAnswer().then((Map<dynamic, dynamic> event) {
-        final bool status = event['status'];
+    if (widget.showIncomingUi) {
+      _stringeeCall.initAnswer().then((event) {
+        bool status = event['status'];
         if (!status) {
           clearDataEndDismiss();
         }
       });
     } else {
-      final Map<String, dynamic> parameters = <String, dynamic>{
+      final parameters = {
         'from': widget.fromUserId,
         'to': widget.toUserId,
         'isVideoCall': widget.isVideoCall,
         'customData': null,
-        'videoResolution': VideoQuality.FULLHD,
+        'videoQuality': VideoQuality.fullHd,
       };
 
-      _stringeeCall!.makeCall(parameters).then((Map<dynamic, dynamic> result) {
-        final bool status = result['status'];
-        final int code = result['code'];
-        final String message = result['message'];
+      _stringeeCall.makeCall(parameters).then((result) {
+        bool status = result['status'];
+        int code = result['code'];
+        String message = result['message'];
         print(
-            'MakeCall CallBack --- $status - $code - $message - ${_stringeeCall!.id} - ${_stringeeCall!.from} - ${_stringeeCall!.to}');
+            'MakeCall CallBack --- $status - $code - $message - ${_stringeeCall.id} - ${_stringeeCall.from} - ${_stringeeCall.to}');
         if (!status) {
           Navigator.pop(context);
         }
@@ -252,71 +255,69 @@ class _CallState extends State<Call> {
     }
   }
 
-  Future<void> _makeOrInitAnswerCall2() async {
+  Future _makeOrInitAnswerCall2() async {
     // Gán cuộc gọi đến cho biến global
     _stringeeCall2 = widget.incomingCall2;
 
-    if (!_showIncomingUi) {
+    if (!widget.showIncomingUi) {
       _stringeeCall2 = StringeeCall2();
     }
 
     // Listen events
-    _stringeeCall2!.eventStreamController.stream.listen((dynamic event) {
-      final Map<dynamic, dynamic> map = event;
-      if (map['typeEvent'] == StringeeCall2Events) {
-        switch (map['eventType']) {
-          case StringeeCall2Events.DidChangeSignalingState:
-            handleSignalingStateChangeEvent(map['body']);
-            break;
-          case StringeeCall2Events.DidChangeMediaState:
-            handleMediaStateChangeEvent(map['body']);
-            break;
-          case StringeeCall2Events.DidReceiveCallInfo:
-            handleReceiveCallInfoEvent(map['body']);
-            break;
-          case StringeeCall2Events.DidHandleOnAnotherDevice:
-            handleHandleOnAnotherDeviceEvent(map['body']);
-            break;
-          case StringeeCall2Events.DidReceiveLocalStream:
-            handleReceiveLocalStreamEvent(map['body']);
-            break;
-          case StringeeCall2Events.DidReceiveRemoteStream:
-            handleReceiveRemoteStreamEvent(map['body']);
-            break;
-          case StringeeCall2Events.DidChangeAudioDevice:
-            if (Platform.isAndroid) {
-              handleChangeAudioDeviceEvent(
-                  map['selectedAudioDevice'], null, _stringeeCall2);
-            }
-            break;
-          default:
-            break;
-        }
+    _stringeeCall2.eventStreamController.stream.listen((event) {
+      Map<dynamic, dynamic> map = event;
+      switch (map['eventType']) {
+        case StringeeCall2Events.didChangeSignalingState:
+          handleSignalingStateChangeEvent(map['body']);
+          break;
+        case StringeeCall2Events.didChangeMediaState:
+          handleMediaStateChangeEvent(map['body']);
+          break;
+        case StringeeCall2Events.didReceiveCallInfo:
+          handleReceiveCallInfoEvent(map['body']);
+          break;
+        case StringeeCall2Events.didHandleOnAnotherDevice:
+          handleHandleOnAnotherDeviceEvent(map['body']);
+          break;
+        case StringeeCall2Events.didReceiveLocalStream:
+          handleReceiveLocalStreamEvent(map['body']);
+          break;
+        case StringeeCall2Events.didReceiveRemoteStream:
+          handleReceiveRemoteStreamEvent(map['body']);
+          break;
+        case StringeeCall2Events.didChangeAudioDevice:
+          if (Platform.isAndroid) {
+            handleChangeAudioDeviceEvent(
+                map['selectedAudioDevice'], null, _stringeeCall2);
+          }
+          break;
+        default:
+          break;
       }
     });
 
-    if (_showIncomingUi) {
-      _stringeeCall2?.initAnswer().then((Map<dynamic, dynamic> event) {
-        final bool status = event['status'];
+    if (widget.showIncomingUi) {
+      _stringeeCall2.initAnswer().then((event) {
+        bool status = event['status'];
         if (!status) {
           clearDataEndDismiss();
         }
       });
     } else {
-      final Map<String, dynamic> parameters = <String, dynamic>{
+      final parameters = {
         'from': widget.fromUserId,
         'to': widget.toUserId,
         'isVideoCall': widget.isVideoCall,
         'customData': null,
-        'videoResolution': VideoQuality.FULLHD,
+        'videoQuality': VideoQuality.fullHd,
       };
 
-      _stringeeCall2!.makeCall(parameters).then((Map<dynamic, dynamic> result) {
-        final bool status = result['status'];
-        final int code = result['code'];
-        final String message = result['message'];
+      _stringeeCall2.makeCall(parameters).then((result) {
+        bool status = result['status'];
+        int code = result['code'];
+        String message = result['message'];
         print(
-            'MakeCall CallBack --- $status - $code - $message - ${_stringeeCall2!.id} - ${_stringeeCall2!.from} - ${_stringeeCall2!.to}');
+            'MakeCall CallBack --- $status - $code - $message - ${_stringeeCall2.id} - ${_stringeeCall2.from} - ${_stringeeCall2.to}');
         if (!status) {
           Navigator.pop(context);
         }
@@ -326,89 +327,94 @@ class _CallState extends State<Call> {
 
   void _endCallTapped() {
     switch (widget.callType) {
-      case StringeeType.StringeeCall:
-        _stringeeCall?.hangup().then((Map<dynamic, dynamic> result) {
+      case StringeeObjectEventType.call:
+        _stringeeCall.hangup().then((result) {
           print('_endCallTapped -- ${result['message']}');
-          final bool status = result['status'];
+          bool status = result['status'];
           if (status) {
-            clearDataEndDismiss();
+            if (Platform.isAndroid) {
+              clearDataEndDismiss();
+            }
           }
         });
         break;
-      case StringeeType.StringeeCall2:
-        _stringeeCall2?.hangup().then((Map<dynamic, dynamic> result) {
+      case StringeeObjectEventType.call2:
+        _stringeeCall2.hangup().then((result) {
           print('_endCallTapped -- ${result['message']}');
-          final bool status = result['status'];
+          bool status = result['status'];
           if (status) {
-            clearDataEndDismiss();
+            if (Platform.isAndroid) {
+              clearDataEndDismiss();
+            }
           }
         });
         break;
-      default:
     }
   }
 
   void _acceptCallTapped() {
     switch (widget.callType) {
-      case StringeeType.StringeeCall:
-        _stringeeCall?.answer().then((Map<dynamic, dynamic> result) {
+      case StringeeObjectEventType.call:
+        _stringeeCall.answer().then((result) {
           print('_acceptCallTapped -- ${result['message']}');
-          final bool status = result['status'];
+          bool status = result['status'];
           if (!status) {
             clearDataEndDismiss();
           }
         });
         break;
-      case StringeeType.StringeeCall2:
-        _stringeeCall2?.answer().then((Map<dynamic, dynamic> result) {
+      case StringeeObjectEventType.call2:
+        _stringeeCall2.answer().then((result) {
           print('_acceptCallTapped -- ${result['message']}');
-          final bool status = result['status'];
+          bool status = result['status'];
           if (!status) {
             clearDataEndDismiss();
           }
         });
         break;
-      default:
     }
     setState(() {
-      _showIncomingUi = !_showIncomingUi;
+      widget.showIncomingUi = !widget.showIncomingUi;
     });
   }
 
   void _rejectCallTapped() {
     switch (widget.callType) {
-      case StringeeType.StringeeCall:
-        _stringeeCall?.reject().then((Map<dynamic, dynamic> result) {
+      case StringeeObjectEventType.call:
+        _stringeeCall.reject().then((result) {
           print('_rejectCallTapped -- ${result['message']}');
-          clearDataEndDismiss();
+          if (Platform.isAndroid) {
+            clearDataEndDismiss();
+          }
         });
         break;
-      case StringeeType.StringeeCall2:
-        _stringeeCall2?.reject().then((Map<dynamic, dynamic> result) {
+      case StringeeObjectEventType.call2:
+        _stringeeCall2.reject().then((result) {
           print('_rejectCallTapped -- ${result['message']}');
-          clearDataEndDismiss();
+          if (Platform.isAndroid) {
+            clearDataEndDismiss();
+          }
         });
         break;
-      default:
     }
   }
 
   void handleSignalingStateChangeEvent(StringeeSignalingState state) {
     print('handleSignalingStateChangeEvent - $state');
     setState(() {
-      _status = state.toString().split('.')[1];
+      status = state.toString().split('.')[1];
     });
     switch (state) {
-      case StringeeSignalingState.Calling:
+      case StringeeSignalingState.calling:
         break;
-      case StringeeSignalingState.Ringing:
+      case StringeeSignalingState.ringing:
         break;
-      case StringeeSignalingState.Answered:
+      case StringeeSignalingState.answered:
         break;
-      case StringeeSignalingState.Busy:
+      case StringeeSignalingState.busy:
         clearDataEndDismiss();
         break;
-      case StringeeSignalingState.Ended:
+      case StringeeSignalingState.ended:
         clearDataEndDismiss();
         break;
       default:
@@ -419,12 +425,12 @@ class _CallState extends State<Call> {
   void handleMediaStateChangeEvent(StringeeMediaState state) {
     print('handleMediaStateChangeEvent - $state');
     setState(() {
-      _status = state.toString().split('.')[1];
+      status = state.toString().split('.')[1];
     });
     switch (state) {
-      case StringeeMediaState.Connected:
+      case StringeeMediaState.connected:
         break;
-      case StringeeMediaState.Disconnected:
+      case StringeeMediaState.disconnected:
         break;
       default:
         break;
@@ -442,43 +448,43 @@ class _CallState extends State<Call> {
   void handleReceiveLocalStreamEvent(String callId) {
     print('handleReceiveLocalStreamEvent - $callId');
     setState(() {
-      _hasLocalStream = true;
-      _callId = callId;
+      widget.hasLocalStream = true;
+      widget.callId = callId;
     });
   }
 
   void handleReceiveRemoteStreamEvent(String callId) {
     print('handleReceiveRemoteStreamEvent - $callId');
     setState(() {
-      _hasRemoteStream = true;
-      _callId = callId;
+      widget.hasRemoteStream = true;
+      widget.callId = callId;
     });
   }
 
   void handleChangeAudioDeviceEvent(
-      AudioDevice audioDevice, StringeeCall? call, StringeeCall2? call2) {
+      AudioDevice audioDevice, StringeeCall call, StringeeCall2 call2) {
     print('handleChangeAudioDeviceEvent - $audioDevice');
     switch (audioDevice) {
-      case AudioDevice.SPEAKER_PHONE:
-      case AudioDevice.EARPIECE:
+      case AudioDevice.speakerPhone:
+      case AudioDevice.earpiece:
         if (call != null) {
-          call.setSpeakerphoneOn(_isSpeaker);
+          call.setSpeakerphoneOn(widget.isSpeaker);
         }
         if (call2 != null) {
-          call2.setSpeakerphoneOn(_isSpeaker);
+          call2.setSpeakerphoneOn(widget.isSpeaker);
         }
         break;
-      case AudioDevice.BLUETOOTH:
-      case AudioDevice.WIRED_HEADSET:
-        _isSpeaker = false;
+      case AudioDevice.bluetooth:
+      case AudioDevice.wiredHeadset:
+        widget.isSpeaker = false;
         if (call != null) {
-          call.setSpeakerphoneOn(_isSpeaker);
+          call.setSpeakerphoneOn(widget.isSpeaker);
         }
         if (call2 != null) {
-          call2.setSpeakerphoneOn(_isSpeaker);
+          call2.setSpeakerphoneOn(widget.isSpeaker);
         }
         break;
-      case AudioDevice.NONE:
+      case AudioDevice.none:
         print('handleChangeAudioDeviceEvent - non audio devices connected');
         break;
     }
@@ -486,11 +492,11 @@ class _CallState extends State<Call> {
 
   void clearDataEndDismiss() {
     if (_stringeeCall != null) {
-      _stringeeCall!.destroy();
+      _stringeeCall.destroy();
       _stringeeCall = null;
       Navigator.pop(context);
     } else if (_stringeeCall2 != null) {
-      _stringeeCall2!.destroy();
+      _stringeeCall2.destroy();
       _stringeeCall2 = null;
       Navigator.pop(context);
     } else {
@@ -499,36 +505,48 @@ class _CallState extends State<Call> {
   }
 }
 
-class ButtonSwitchCamera extends StatelessWidget {
-  const ButtonSwitchCamera({Key? key, required this.isMirror})
-      : super(key: key);
-  final bool isMirror;
+class ButtonSwitchCamera extends StatefulWidget {
+  bool isMirror;
 
+  ButtonSwitchCamera({
+    Key key,
+    this.isMirror,
+  }) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _ButtonSwitchCameraState();
+}
+
+class _ButtonSwitchCameraState extends State<ButtonSwitchCamera> {
   void _toggleSwitchCamera() {
     if (_stringeeCall != null) {
-      _stringeeCall
-          ?.switchCamera(!isMirror)
-          .then((Map<dynamic, dynamic> result) {
-        final bool status = result['status'];
+      widget.isMirror = !widget.isMirror;
+      _stringeeCall.switchCamera(widget.isMirror).then((result) {
+        bool status = result['status'];
         if (status) {}
       });
     } else {
-      _stringeeCall2
-          ?.switchCamera(!isMirror)
-          .then((Map<dynamic, dynamic> result) {
-        final bool status = result['status'];
+      widget.isMirror = !widget.isMirror;
+      _stringeeCall2.switchCamera(widget.isMirror).then((result) {
+        bool status = result['status'];
         if (status) {}
       });
     }
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Align(
+    // TODO: implement build
+    return new Align(
       alignment: Alignment.topLeft,
       child: Padding(
-        padding: const EdgeInsets.only(left: 50.0, top: 50.0),
-        child: GestureDetector(
+        padding: EdgeInsets.only(left: 50.0, top: 50.0),
+        child: new GestureDetector(
           onTap: _toggleSwitchCamera,
           child: Image.asset(
             'images/switch_camera.png',
@@ -542,22 +560,24 @@ class ButtonSwitchCamera extends StatelessWidget {
 }
 
 class ButtonSpeaker extends StatefulWidget {
-  const ButtonSpeaker({Key? key, required this.isSpeaker}) : super(key: key);
   final bool isSpeaker;
+
+  ButtonSpeaker({
+    Key key,
+    @required this.isSpeaker,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _ButtonSpeakerState();
 }
 
 class _ButtonSpeakerState extends State<ButtonSpeaker> {
-  late bool _isSpeaker;
+  bool _isSpeaker;
 
   void _toggleSpeaker() {
     if (_stringeeCall != null) {
-      _stringeeCall
-          ?.setSpeakerphoneOn(!_isSpeaker)
-          .then((Map<dynamic, dynamic> result) {
-        final bool status = result['status'];
+      _stringeeCall.setSpeakerphoneOn(!_isSpeaker).then((result) {
+        bool status = result['status'];
         if (status) {
           setState(() {
             _isSpeaker = !_isSpeaker;
@@ -565,10 +585,8 @@ class _ButtonSpeakerState extends State<ButtonSpeaker> {
         }
       });
     } else {
-      _stringeeCall2
-          ?.setSpeakerphoneOn(!_isSpeaker)
-          .then((Map<dynamic, dynamic> result) {
-        final bool status = result['status'];
+      _stringeeCall2.setSpeakerphoneOn(!_isSpeaker).then((result) {
+        bool status = result['status'];
         if (status) {
           setState(() {
             _isSpeaker = !_isSpeaker;
@@ -586,7 +604,8 @@ class _ButtonSpeakerState extends State<ButtonSpeaker> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    // TODO: implement build
+    return new GestureDetector(
       onTap: _toggleSpeaker,
       child: Image.asset(
         _isSpeaker ? 'images/ic_speaker_off.png' : 'images/ic_speaker_on.png',
@@ -598,20 +617,24 @@ class _ButtonSpeakerState extends State<ButtonSpeaker> {
 }
 
 class ButtonMicro extends StatefulWidget {
-  const ButtonMicro({Key? key, required this.isMute}) : super(key: key);
   final bool isMute;
+
+  ButtonMicro({
+    Key key,
+    @required this.isMute,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _ButtonMicroState();
 }
 
 class _ButtonMicroState extends State<ButtonMicro> {
-  late bool _isMute;
+  bool _isMute;
 
   void _toggleMicro() {
     if (_stringeeCall != null) {
-      _stringeeCall?.mute(!_isMute).then((Map<dynamic, dynamic> result) {
-        final bool status = result['status'];
+      _stringeeCall.mute(!_isMute).then((result) {
+        bool status = result['status'];
         if (status) {
           setState(() {
             _isMute = !_isMute;
@@ -619,8 +642,8 @@ class _ButtonMicroState extends State<ButtonMicro> {
         }
       });
     } else {
-      _stringeeCall2?.mute(!_isMute).then((Map<dynamic, dynamic> result) {
-        final bool status = result['status'];
+      _stringeeCall2.mute(!_isMute).then((result) {
+        bool status = result['status'];
         if (status) {
           setState(() {
             _isMute = !_isMute;
@@ -638,7 +661,8 @@ class _ButtonMicroState extends State<ButtonMicro> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    // TODO: implement build
+    return new GestureDetector(
       onTap: _toggleMicro,
       child: Image.asset(
         _isMute ? 'images/ic_mute.png' : 'images/ic_mic.png',
@@ -650,42 +674,38 @@ class _ButtonMicroState extends State<ButtonMicro> {
 }
 
 class ButtonVideo extends StatefulWidget {
-  const ButtonVideo({Key? key, required this.isVideoEnable}) : super(key: key);
   final bool isVideoEnable;
+
+  ButtonVideo({
+    Key key,
+    @required this.isVideoEnable,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _ButtonVideoState();
 }
 
 class _ButtonVideoState extends State<ButtonVideo> {
-  late bool _isVideoEnable;
+  bool _isVideoEnable;
 
   void _toggleVideo() {
     if (_stringeeCall != null) {
-      // _stringeeCall.enableVideo(!_isVideoEnable).then((result) {
-      //   bool status = result['status'];
-      //   if (status) {
-      //     setState(() {
-      //       _isVideoEnable = !_isVideoEnable;
-      //     });
-      //   }
-      // });
-      _stringeeCall?.resumeVideo().then((Map<dynamic, dynamic> result) {
-        final bool status = result['status'];
-        if (status) {}
+      _stringeeCall.enableVideo(!_isVideoEnable).then((result) {
+        bool status = result['status'];
+        if (status) {
+          setState(() {
+            _isVideoEnable = !_isVideoEnable;
+          });
+        }
       });
     } else {
-      // _stringeeCall2.enableVideo(!_isVideoEnable).then((result) {
-      //   bool status = result['status'];
-      //   if (status) {
-      //     setState(() {
-      //       _isVideoEnable = !_isVideoEnable;
-      //     });
-      //   }
-      // });
-      _stringeeCall2?.resumeVideo().then((Map<dynamic, dynamic> result) {
-        final bool status = result['status'];
-        if (status) {}
+      _stringeeCall2.enableVideo(!_isVideoEnable).then((result) {
+        bool status = result['status'];
+        if (status) {
+          setState(() {
+            _isVideoEnable = !_isVideoEnable;
+          });
+        }
       });
     }
   }
@@ -698,7 +718,8 @@ class _ButtonVideoState extends State<ButtonVideo> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    // TODO: implement build
+    return new GestureDetector(
       onTap: widget.isVideoEnable ? _toggleVideo : null,
       child: Image.asset(
         _isVideoEnable ? 'images/ic_video.png' : 'images/ic_video_off.png',

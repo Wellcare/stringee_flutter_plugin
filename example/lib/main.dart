@@ -1,120 +1,142 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:permission/permission.dart';
 import 'package:stringee_flutter_plugin/stringee_flutter_plugin.dart';
+import 'package:stringee_flutter_plugin_example/Chat.dart';
 
 import 'Call.dart';
 
-const String user1 =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MDg3MTY0ODAiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjExMzA4NDgwLCJ1c2VySWQiOiJ1c2VyMSJ9.e5U4nCiHrKDpuqi8oWs0LHTtzcH6_2Q0hP1oqMdNeMw';
-const String user2 =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZULTE2MDYxMjI4OTkiLCJpc3MiOiJTS0UxUmRVdFVhWXhOYVFRNFdyMTVxRjF6VUp1UWRBYVZUIiwiZXhwIjoxNjA4NzE0ODk5LCJ1c2VySWQiOiJ1c2VyMiJ9.b_tG9wp0zharQV0EHVSGefXyCzUvmGjqTImEVNOg01o';
-const String token =
-    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS3RVaTBMZzNLa0lISkVwRTNiakZmMmd6UGtsNzlsU1otMTYwODg2NjkxMiIsImlzcyI6IlNLdFVpMExnM0trSUhKRXBFM2JqRmYyZ3pQa2w3OWxTWiIsImV4cCI6MTYwODk1MzMxMiwidXNlcklkIjoiQUM3RlRFTzZHVCIsImljY19hcGkiOnRydWUsImRpc3BsYXlOYW1lIjoiTmd1eVx1MWVjNW4gUXVhbmcgS1x1MWVmMyBBbmgiLCJhdmF0YXJVcmwiOm51bGwsInN1YnNjcmliZSI6Im9ubGluZV9zdGF0dXNfR1I2Nkw3SU4sQUxMX0NBTExfU1RBVFVTLGFnZW50X21hbnVhbF9zdGF0dXMiLCJhdHRyaWJ1dGVzIjoiW3tcImF0dHJpYnV0ZVwiOlwib25saW5lU3RhdHVzXCIsXCJ0b3BpY1wiOlwib25saW5lX3N0YXR1c19HUjY2TDdJTlwifSx7XCJhdHRyaWJ1dGVcIjpcImNhbGxcIixcInRvcGljXCI6XCJjYWxsX0dSNjZMN0lOXCJ9XSJ9.akfOwo9a2WzhZvLcUGi322LJgJLrn2sRIz4Wls1RG_E';
-final StringeeClient client = StringeeClient();
-String strUserId = '';
+var token = 'PUT YOUR TOKEN HERE';
+var user1 =
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MTY3MjY0OTMiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjE5MzE4NDkzLCJ1c2VySWQiOiJ1c2VyMSJ9.8ka6vTat6Oga23QnchMZ6Fjy7DMZOxus7N-eK9M0XS4';
+var user2 =
+    'eyJjdHkiOiJzdHJpbmdlZS1hcGk7dj0xIiwidHlwIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJqdGkiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyLTE2MTY3MjY1MTMiLCJpc3MiOiJTS0xIb2NCdDl6Qk5qc1pLeThZaUVkSzRsU3NBZjhCSHpyIiwiZXhwIjoxNjE5MzE4NTEzLCJ1c2VySWQiOiJ1c2VyMiJ9.Lu893H0Rkc0DwPzlsZDbryezGv_pVfWAegzVa_4gccQ';
+StringeeClient _client = StringeeClient();
+
+String strUserId = "";
 
 void main() {
-  runApp(MyApp());
+  runApp(new MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'OneToOneCallSample', home: MyHomePage());
+    return new MaterialApp(title: "OneToOneCallSample", home: new MyHomePage());
   }
 }
 
 class MyHomePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
+    // TODO: implement createState
     return _MyHomePageState();
   }
 }
 
 class _MyHomePageState extends State<MyHomePage> {
   String myUserId = 'Not connected...';
+  bool isAppInBackground = false;
 
   @override
-  void initState() {
+  Future<void> initState() {
+    // TODO: implement initState
     super.initState();
 
-    // Lắng nghe sự kiện của StringeeClient(kết nối, cuộc gọi đến...)
-    client.eventStreamController.stream.listen((dynamic event) {
-      final Map<dynamic, dynamic> map = event;
-      if (map['typeEvent'] == StringeeClientEvents) {
-        switch (map['eventType']) {
-          case StringeeClientEvents.DidConnect:
-            handleDidConnectEvent();
-            break;
-          case StringeeClientEvents.DidDisconnect:
-            handleDiddisconnectEvent();
-            break;
-          case StringeeClientEvents.DidFailWithError:
-            handleDidFailWithErrorEvent(map['code'], map['message']);
-            break;
-          case StringeeClientEvents.RequestAccessToken:
-            handleRequestAccessTokenEvent();
-            break;
-          case StringeeClientEvents.DidReceiveCustomMessage:
-            handleDidReceiveCustomMessageEvent(
-                map['body']['from'], map['body']['message']);
-            break;
-          case StringeeClientEvents.DidReceiveTopicMessage:
-            handleDidReceiveTopicMessageEvent(
-                map['body']['from'], map['body']['message']);
-            break;
-          case StringeeClientEvents.IncomingCall:
-            final StringeeCall call = map['body'];
-            handleIncomingCallEvent(call);
-            break;
-          case StringeeClientEvents.IncomingCall2:
-            final StringeeCall2 call = map['body'];
-            handleIncomingCall2Event(call);
-            break;
-          default:
-            break;
-        }
+    if (Platform.isAndroid) {
+      requestPermissions();
+    }
+
+    /// Lắng nghe sự kiện của StringeeClient(kết nối, cuộc gọi đến...)
+    _client.eventStreamController.stream.listen((event) {
+      Map<dynamic, dynamic> map = event;
+      switch (map['eventType']) {
+        case StringeeClientEvents.didConnect:
+          handleDidConnectEvent();
+          break;
+        case StringeeClientEvents.didDisconnect:
+          handleDiddisconnectEvent();
+          break;
+        case StringeeClientEvents.didFailWithError:
+          handleDidFailWithErrorEvent(map['body']['code'], map['body']['message']);
+          break;
+        case StringeeClientEvents.requestAccessToken:
+          handleRequestAccessTokenEvent();
+          break;
+        case StringeeClientEvents.didReceiveCustomMessage:
+          handleDidReceiveCustomMessageEvent(map['body']);
+          break;
+        case StringeeClientEvents.incomingCall:
+          StringeeCall call = map['body'];
+          handleIncomingCallEvent(call);
+          break;
+        case StringeeClientEvents.incomingCall2:
+          StringeeCall2 call = map['body'];
+          handleIncomingCall2Event(call);
+          break;
+        case StringeeClientEvents.didReceiveObjectChange:
+          StringeeObjectChange objectChange = map['body'];
+          print(objectChange.objectType.toString() + '\t' + objectChange.type.toString());
+          print(objectChange.objects.toString());
+          break;
+        default:
+          break;
       }
     });
 
-    // Connect
-    client.connect(token);
+    /// Connect
+    _client.connect(user2);
+  }
+
+  requestPermissions() async {
+    List<PermissionName> permissionNames = [];
+    permissionNames.add(PermissionName.Camera);
+    permissionNames.add(PermissionName.Contacts);
+    permissionNames.add(PermissionName.Microphone);
+    permissionNames.add(PermissionName.Location);
+    permissionNames.add(PermissionName.Storage);
+    permissionNames.add(PermissionName.State);
+    permissionNames.add(PermissionName.Internet);
+    var permissions = await Permission.requestPermissions(permissionNames);
+    permissions.forEach((permission) {});
   }
 
   @override
   Widget build(BuildContext context) {
-    final Widget topText = Container(
-      padding: const EdgeInsets.only(left: 10.0, top: 10.0),
-      child: Text(
+    Widget topText = new Container(
+      padding: EdgeInsets.only(left: 10.0, top: 10.0),
+      child: new Text(
         'Connected as: $myUserId',
-        style: const TextStyle(
+        style: new TextStyle(
           color: Colors.black,
           fontSize: 20.0,
         ),
       ),
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('OneToOneCallSample'),
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text("OneToOneCallSample"),
         backgroundColor: Colors.indigo[600],
       ),
-      body: Stack(
-        children: <Widget>[topText, MyForm()],
+      body: new Stack(
+        children: <Widget>[topText, new MyForm()],
       ),
     );
   }
 
   //region Handle Client Event
   void handleDidConnectEvent() {
-    if (client.userId != null)
-      setState(() {
-        myUserId = client.userId!;
-      });
+    setState(() {
+      myUserId = _client.userId;
+    });
   }
 
   void handleDiddisconnectEvent() {
     setState(() {
-      myUserId = 'Not connected...';
+      myUserId = 'Not connected';
     });
   }
 
@@ -126,158 +148,157 @@ class _MyHomePageState extends State<MyHomePage> {
     print('Request new access token');
   }
 
-  void handleDidReceiveCustomMessageEvent(
-      String from, Map<dynamic, dynamic> message) {
-    print('from: ' + from + '\nmessage: ' + message.toString());
-  }
-
-  void handleDidReceiveTopicMessageEvent(
-      String from, Map<dynamic, dynamic> message) {
-    print('from: ' + from + '\nmessage: ' + message.toString());
+  void handleDidReceiveCustomMessageEvent(Map<dynamic, dynamic> map) {
+    print('from: ' + map['fromUserId'] + '\nmessage: ' + map['message']);
   }
 
   void handleIncomingCallEvent(StringeeCall call) {
-    if (call.from != null && call.to != null) {
-      Navigator.push<void>(
-        context,
-        MaterialPageRoute<void>(
-          builder: (BuildContext context) => Call(
-            fromUserId: call.from!,
-            toUserId: call.to!,
-            isVideoCall: call.isVideocall,
-            callType: StringeeType.StringeeCall,
-            showIncomingUi: true,
-            incomingCall: call,
-          ),
-        ),
-      );
-    }
+    showCallScreen(call, null);
   }
 
   void handleIncomingCall2Event(StringeeCall2 call) {
-    if (call.from != null && call.to != null) {
-      Navigator.push<void>(
-        context,
-        MaterialPageRoute<void>(
-          builder: (BuildContext context) => Call(
-            fromUserId: call.from!,
-            toUserId: call.to!,
-            isVideoCall: call.isVideocall,
-            callType: StringeeType.StringeeCall2,
-            showIncomingUi: true,
-            incomingCall2: call,
-          ),
-        ),
-      );
-    }
+    showCallScreen(null, call);
   }
 
+  void showCallScreen(StringeeCall call, StringeeCall2 call2) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Call(
+          fromUserId: call != null ? call.from : call2.from,
+          toUserId: call != null ? call.to : call2.to,
+          isVideoCall: call != null ? call.isVideoCall : call2.isVideoCall,
+          callType: call != null ? StringeeObjectEventType.call : StringeeObjectEventType.call2,
+          showIncomingUi: true,
+          incomingCall2: call != null ? null : call2,
+          incomingCall: call != null ? call : null,
+        ),
+      ),
+    );
+  }
 //endregion
 }
 
-class MyForm extends StatelessWidget {
+class MyForm extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return _MyFormState();
+  }
+}
+
+class _MyFormState extends State<MyForm> {
   @override
   Widget build(BuildContext context) {
-    return Form(
-      child: Column(
+    // TODO: implement build
+    return new Form(
+//      key: _formKey,
+      child: new Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Container(
-            padding: const EdgeInsets.all(20.0),
-            child: TextField(
+          new Container(
+            padding: EdgeInsets.all(20.0),
+            child: new TextField(
               onChanged: (String value) {
                 _changeText(value);
               },
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                 ),
               ),
             ),
           ),
-          Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    ElevatedButton(
-                      onPressed: () {
-                        _callTapped(false, StringeeType.StringeeCall);
-                      },
-                      child: const Text('CALL'),
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.resolveWith(
-                          (_) => Colors.grey[300],
+          new Container(
+            child: new Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    new Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        new Container(
+                          height: 40.0,
+                          width: 175.0,
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
+                            onPressed: () {
+                              _CallTapped(false, StringeeObjectEventType.call);
+                            },
+                            child: Text('CALL'),
+                          ),
                         ),
-                        foregroundColor: MaterialStateProperty.resolveWith(
-                          (_) => Colors.black,
+                        new Container(
+                          height: 40.0,
+                          width: 175.0,
+                          margin: EdgeInsets.only(top: 20.0),
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
+                            onPressed: () {
+                              _CallTapped(true, StringeeObjectEventType.call);
+                            },
+                            child: Text('VIDEOCALL'),
+                          ),
                         ),
-                        padding: MaterialStateProperty.resolveWith(
-                          (_) => const EdgeInsets.only(left: 20.0, right: 20.0),
-                        ),
-                      ),
+                      ],
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        _callTapped(true, StringeeType.StringeeCall);
-                      },
-                      child: const Text('VIDEOCALL'),
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.resolveWith(
-                          (_) => Colors.grey[300],
+                    new Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        new Container(
+                          height: 40.0,
+                          width: 175.0,
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
+                            padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                            onPressed: () {
+                              _CallTapped(false, StringeeObjectEventType.call2);
+                            },
+                            child: Text('CALL2'),
+                          ),
                         ),
-                        foregroundColor: MaterialStateProperty.resolveWith(
-                          (_) => Colors.black,
+                        new Container(
+                          height: 40.0,
+                          width: 175.0,
+                          margin: EdgeInsets.only(top: 20.0),
+                          child: new RaisedButton(
+                            color: Colors.grey[300],
+                            textColor: Colors.black,
+                            padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                            onPressed: () {
+                              _CallTapped(true, StringeeObjectEventType.call2);
+                            },
+                            child: Text('VIDEOCALL2'),
+                          ),
                         ),
-                        padding: MaterialStateProperty.resolveWith(
-                          (_) => const EdgeInsets.only(left: 20.0, right: 20.0),
-                        ),
-                      ),
+                      ],
                     ),
                   ],
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    ElevatedButton(
-                      onPressed: () {
-                        _callTapped(false, StringeeType.StringeeCall2);
-                      },
-                      child: const Text('CALL2'),
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.resolveWith(
-                          (_) => Colors.grey[300],
-                        ),
-                        foregroundColor: MaterialStateProperty.resolveWith(
-                          (_) => Colors.black,
-                        ),
-                        padding: MaterialStateProperty.resolveWith(
-                          (_) => const EdgeInsets.only(left: 20.0, right: 20.0),
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        _callTapped(true, StringeeType.StringeeCall2);
-                      },
-                      child: const Text('VIDEOCALL2'),
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.resolveWith(
-                          (_) => Colors.grey[300],
-                        ),
-                        foregroundColor: MaterialStateProperty.resolveWith(
-                          (_) => Colors.black,
-                        ),
-                        padding: MaterialStateProperty.resolveWith(
-                          (_) => const EdgeInsets.only(left: 20.0, right: 20.0),
-                        ),
-                      ),
-                    ),
-                  ],
+                new Container(
+                  height: 40.0,
+                  width: 175.0,
+                  margin: EdgeInsets.only(top: 20.0),
+                  child: new RaisedButton(
+                    color: Colors.grey[300],
+                    textColor: Colors.black,
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Chat(
+                                    client: _client,
+                                  )));
+                    },
+                    child: Text('CHAT'),
+                  ),
                 )
               ],
             ),
@@ -288,39 +309,23 @@ class MyForm extends StatelessWidget {
   }
 
   void _changeText(String val) {
-    strUserId = val;
+    setState(() {
+      strUserId = val;
+    });
   }
 
-  void _callTapped(bool isVideoCall, StringeeType callType) {
-    // if (strUserId.isEmpty || !client.hasConnected) return;
-    //
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //       builder: (context) => Call(
-    //           fromUserId: client.userId,
-    //           toUserId: strUserId,
-    //           isVideoCall: isVideoCall,
-    //           callType: callType,
-    //           showIncomingUi: false)),
-    // );
-    // List<User> users = [];
-    // User user = new User('3', 'a', null);
-    // User user2 = new User('v', 'v', null);
-    // users.add(user);
-    // users.add(user2);
-    //
-    // ConversationOption option = new ConversationOption('a', true, false);
-    // final parameters = {
-    //   'users': users,
-    //   'option': option,
-    // };
-    // client.createConversation(parameters);
+  void _CallTapped(bool isVideoCall, StringeeObjectEventType callType) {
+    if (strUserId.isEmpty || !_client.hasConnected) return;
 
-    final Map<String, String> parameters = <String, String>{
-      'convId': 'conv-vn-1-73JJ5R8BMN-1606409865248'
-    };
-
-    client.getConversationById(parameters);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => Call(
+              fromUserId: _client.userId,
+              toUserId: strUserId,
+              isVideoCall: isVideoCall,
+              callType: callType,
+              showIncomingUi: false)),
+    );
   }
 }
