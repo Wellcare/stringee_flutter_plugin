@@ -102,45 +102,46 @@ enum ScalingType {
 
 ///Class represents options for make a call
 class MakeCallParams {
-  String _from;
-  String _to;
-  bool _isVideoCall;
-  Map<dynamic, dynamic> _customData;
-  VideoQuality _videoQuality;
+  String? _from;
+  String? _to;
+  bool? _isVideoCall;
+  Map<dynamic, dynamic>? _customData;
+  VideoQuality? _videoQuality;
 
   MakeCallParams(
     String from,
     String to, {
-    bool isVideoCall,
-    Map<dynamic, dynamic> customData,
-    VideoQuality videoQuality,
+    bool? isVideoCall,
+    Map<dynamic, dynamic>? customData,
+    VideoQuality? videoQuality,
   })  : assert(from != null || from.trim().isNotEmpty),
         assert(to != null || to.trim().isNotEmpty) {
     this._from = from.trim();
     this._to = to.trim();
     this._isVideoCall = (isVideoCall != null) ? isVideoCall : false;
     if (customData != null) this._customData = customData;
-    if (this._isVideoCall)
-      this._videoQuality = (videoQuality != null) ? videoQuality : VideoQuality.normal;
+    if (this._isVideoCall ?? false)
+      this._videoQuality =
+          (videoQuality != null) ? videoQuality : VideoQuality.normal;
   }
 
-  VideoQuality get videoQuality => _videoQuality;
+  VideoQuality? get videoQuality => _videoQuality;
 
-  Map<dynamic, dynamic> get customData => _customData;
+  Map<dynamic, dynamic>? get customData => _customData;
 
-  bool get isVideoCall => _isVideoCall;
+  bool? get isVideoCall => _isVideoCall;
 
-  String get to => _to;
+  String? get to => _to;
 
-  String get from => _from;
+  String? get from => _from;
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> params = new Map();
-    params['from'] = this._from.trim();
-    params['to'] = this._to.trim();
+    params['from'] = this._from?.trim();
+    params['to'] = this._to?.trim();
     if (this._customData != null) params['customData'] = this._customData;
     params['isVideoCall'] = this._isVideoCall;
-    if (this._isVideoCall) {
+    if (this._isVideoCall ?? false) {
       switch (this._videoQuality) {
         case VideoQuality.normal:
           params['videoResolution'] = "NORMAL";
@@ -151,6 +152,7 @@ class MakeCallParams {
         case VideoQuality.fullHd:
           params['videoResolution'] = "FULLHD";
           break;
+        default:
       }
     }
     return params;
@@ -247,7 +249,7 @@ extension MsgTypeValueExtension on MsgType {
 
 extension MsgTypeExtension on int {
   // ignore: missing_return
-  MsgType get msgType {
+  MsgType? get msgType {
     switch (this) {
       case 1:
         return MsgType.text;
@@ -298,7 +300,7 @@ enum MsgNotifyType {
 
 extension MsgNotifyTypeExtension on int {
   // ignore: missing_return
-  MsgNotifyType get notifyType {
+  MsgNotifyType? get notifyType {
     switch (this) {
       case 1:
         return MsgNotifyType.addParticipants;
@@ -315,11 +317,12 @@ extension MsgNotifyTypeExtension on int {
 
 ///Class represents options for create a new [StringeeConversation]
 class StringeeConversationOption {
-  String _name;
-  bool _isGroup;
-  bool _isDistinct;
+  String? _name;
+  bool? _isGroup;
+  bool? _isDistinct;
 
-  StringeeConversationOption({@required bool isGroup, String name, bool isDistinct})
+  StringeeConversationOption(
+      {required bool isGroup, String? name, bool? isDistinct})
       : assert(isGroup != null) {
     if (name != null) this._name = name;
     this._isGroup = isGroup != null ? isGroup : true;
@@ -332,7 +335,7 @@ class StringeeConversationOption {
 
   Map<String, dynamic> toJson() {
     return {
-      if (_name != null) 'name': _name.trim(),
+      if (_name != null) 'name': _name?.trim(),
       'isGroup': _isGroup,
       'isDistinct': _isDistinct,
     };
@@ -341,17 +344,18 @@ class StringeeConversationOption {
 
 /// Class represents the change of [StringeeConversation] and [StringeeMessage]
 class StringeeObjectChange {
-  ChangeType _type;
-  ObjectType _objectType;
-  List<dynamic> _objects;
+  ChangeType? _type;
+  ObjectType? _objectType;
+  List<dynamic>? _objects;
 
-  ChangeType get type => _type;
+  ChangeType? get type => _type;
 
-  ObjectType get objectType => _objectType;
+  ObjectType? get objectType => _objectType;
 
-  List<dynamic> get objects => _objects;
+  List<dynamic>? get objects => _objects;
 
-  StringeeObjectChange(ChangeType type, ObjectType objectType, List<dynamic> objects) {
+  StringeeObjectChange(
+      ChangeType type, ObjectType objectType, List<dynamic> objects) {
     this._type = type;
     this._objects = objects;
     this._objectType = objectType;
@@ -359,12 +363,12 @@ class StringeeObjectChange {
 }
 
 class StringeeServerAddress {
-  String _host;
-  int _port;
+  String? _host;
+  int? _port;
 
-  String get host => _host;
+  String? get host => _host;
 
-  int get port => _port;
+  int? get port => _port;
 
   StringeeServerAddress(String host, int port) {
     this._host = host;
@@ -373,7 +377,7 @@ class StringeeServerAddress {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> params = new Map();
-    if (_host != null) params['host'] = _host.trim();
+    if (_host != null) params['host'] = _host?.trim();
     if (_port != null) params['port'] = _port;
     return params;
   }

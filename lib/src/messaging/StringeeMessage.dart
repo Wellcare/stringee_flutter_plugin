@@ -5,41 +5,41 @@ import '../StringeeConstants.dart';
 
 class StringeeMessage {
   /// Base
-  String _id;
-  String _localId;
-  String _convId;
-  String _senderId;
-  int _createdAt;
-  int _sequence;
-  MsgState _state;
-  MsgType _type;
-  String _text;
+  String? _id;
+  String? _localId;
+  String? _convId;
+  String? _senderId;
+  int? _createdAt;
+  int? _sequence;
+  MsgState? _state;
+  MsgType? _type;
+  String? _text;
 
   /// Photo
-  String _thumbnail;
-  String _filePath;
-  String _fileUrl;
+  String? _thumbnail;
+  String? _filePath;
+  String? _fileUrl;
 
   /// Location
-  double _latitude;
-  double _longitude;
+  double? _latitude;
+  double? _longitude;
 
   /// File
-  String _fileName;
-  int _fileLength;
+  String? _fileName;
+  int? _fileLength;
 
   /// Audio + Video
-  int _duration;
-  double _ratio;
+  int? _duration;
+  double? _ratio;
 
-  String _vcard;
+  String? _vcard;
 
   /// Sticker
-  String _stickerCategory;
-  String _stickerName;
+  String? _stickerCategory;
+  String? _stickerName;
 
-  Map<dynamic, dynamic> _customData;
-  Map<dynamic, dynamic> _notiContent;
+  Map<dynamic, dynamic>? _customData;
+  Map<dynamic, dynamic>? _notiContent;
 
   @override
   String toString() {
@@ -52,7 +52,7 @@ class StringeeMessage {
 
   StringeeMessage.typeText(
     String text, {
-    Map<dynamic, dynamic> customData,
+    Map<dynamic, dynamic>? customData,
   }) : assert(text != null || text.trim().isNotEmpty) {
     this._type = MsgType.text;
     this._text = text.trim();
@@ -63,9 +63,9 @@ class StringeeMessage {
 
   StringeeMessage.typePhoto(
     String filePath, {
-    String thumbnail,
-    double ratio,
-    Map<dynamic, dynamic> customData,
+    String? thumbnail,
+    double? ratio,
+    Map<dynamic, dynamic>? customData,
   }) : assert(filePath != null || filePath.trim().isNotEmpty) {
     this._type = MsgType.photo;
     this._filePath = filePath.trim();
@@ -83,9 +83,9 @@ class StringeeMessage {
   StringeeMessage.typeVideo(
     String filePath,
     int duration, {
-    String thumbnail,
-    double ratio,
-    Map<dynamic, dynamic> customData,
+    String? thumbnail,
+    double? ratio,
+    Map<dynamic, dynamic>? customData,
   })  : assert(filePath != null || filePath.trim().isNotEmpty),
         assert(duration != null || duration > 0) {
     this._type = MsgType.video;
@@ -105,7 +105,7 @@ class StringeeMessage {
   StringeeMessage.typeAudio(
     String filePath,
     int duration, {
-    Map<dynamic, dynamic> customData,
+    Map<dynamic, dynamic>? customData,
   })  : assert(filePath != null || filePath.trim().isNotEmpty),
         assert(duration != null || duration > 0) {
     this._type = MsgType.audio;
@@ -118,9 +118,9 @@ class StringeeMessage {
 
   StringeeMessage.typeFile(
     String filePath, {
-    String fileName,
-    int fileLength,
-    Map<dynamic, dynamic> customData,
+    String? fileName,
+    int? fileLength,
+    Map<dynamic, dynamic>? customData,
   }) : assert(filePath != null || filePath.trim().isNotEmpty) {
     this._type = MsgType.file;
     this._filePath = filePath.trim();
@@ -138,7 +138,7 @@ class StringeeMessage {
 
   StringeeMessage.typeLink(
     String text, {
-    Map<dynamic, dynamic> customData,
+    Map<dynamic, dynamic>? customData,
   }) : assert(text != null || text.trim().isNotEmpty) {
     this._type = MsgType.link;
     this._text = text.trim();
@@ -150,7 +150,7 @@ class StringeeMessage {
   StringeeMessage.typeLocation(
     double latitude,
     double longitude, {
-    Map<dynamic, dynamic> customData,
+    Map<dynamic, dynamic>? customData,
   })  : assert(latitude != null || latitude > 0),
         assert(longitude != null || longitude > 0) {
     this._type = MsgType.location;
@@ -163,7 +163,7 @@ class StringeeMessage {
 
   StringeeMessage.typeContact(
     String vcard, {
-    Map<dynamic, dynamic> customData,
+    Map<dynamic, dynamic>? customData,
   }) : assert(vcard != null || vcard.trim().isNotEmpty) {
     this._type = MsgType.contact;
     this._vcard = vcard.trim();
@@ -175,7 +175,7 @@ class StringeeMessage {
   StringeeMessage.typeSticker(
     String stickerCategory,
     String stickerName, {
-    Map<dynamic, dynamic> customData,
+    Map<dynamic, dynamic>? customData,
   })  : assert(stickerCategory != null || stickerCategory.trim().isNotEmpty),
         assert(stickerName != null || stickerName.trim().isNotEmpty) {
     this._type = MsgType.contact;
@@ -186,53 +186,53 @@ class StringeeMessage {
     }
   }
 
-  Map<dynamic, dynamic> get customData => _customData;
+  Map<dynamic, dynamic>? get customData => _customData;
 
-  Map<dynamic, dynamic> get notiContent => _notiContent;
+  Map<dynamic, dynamic>? get notiContent => _notiContent;
 
-  String get stickerName => _stickerName;
+  String? get stickerName => _stickerName;
 
-  String get stickerCategory => _stickerCategory;
+  String? get stickerCategory => _stickerCategory;
 
-  double get ratio => _ratio;
+  double? get ratio => _ratio;
 
-  int get duration => _duration;
+  int? get duration => _duration;
 
-  int get fileLength => _fileLength;
+  int? get fileLength => _fileLength;
 
-  String get fileName => _fileName;
+  String? get fileName => _fileName;
 
-  String get fileUrl => _fileUrl;
+  String? get fileUrl => _fileUrl;
 
-  String get filePath => _filePath;
+  String? get filePath => _filePath;
 
-  double get longitude => _longitude;
+  double? get longitude => _longitude;
 
-  double get latitude => _latitude;
+  double? get latitude => _latitude;
 
-  String get thumbnail => _thumbnail;
+  String? get thumbnail => _thumbnail;
 
-  String get text => _text;
+  String? get text => _text;
 
-  MsgType get type => _type;
+  MsgType? get type => _type;
 
-  MsgState get state => _state;
+  MsgState? get state => _state;
 
-  int get sequence => _sequence;
+  int? get sequence => _sequence;
 
-  int get createdAt => _createdAt;
+  int? get createdAt => _createdAt;
 
-  String get senderId => _senderId;
+  String? get senderId => _senderId;
 
-  String get convId => _convId;
+  String? get convId => _convId;
 
-  String get id => _id;
+  String? get id => _id;
 
-  String get localId => _localId;
+  String? get localId => _localId;
 
-  String get vcard => _vcard;
+  String? get vcard => _vcard;
 
-  set convId(String value) {
+  set convId(String? value) {
     _convId = value;
   }
 
@@ -249,7 +249,7 @@ class StringeeMessage {
     this._customData = msgInfor['customData'];
     this._state = MsgState.values[msgInfor['state']];
 
-    MsgType msgType = (msgInfor['type'] as int).msgType;
+    MsgType? msgType = (msgInfor['type'] as int).msgType;
     this._type = msgType;
     String text = '';
     switch (this._type) {
@@ -270,9 +270,9 @@ class StringeeMessage {
         }
 
         this._notiContent = new Map<dynamic, dynamic>();
-        this._notiContent["groupName"] = groupName;
-        this._notiContent["creator"] = creator;
-        this._notiContent["participants"] = participants;
+        this._notiContent!["groupName"] = groupName;
+        this._notiContent!["creator"] = creator;
+        this._notiContent!["participants"] = participants;
         break;
       case MsgType.photo:
         Map<dynamic, dynamic> photoMap = msgInfor['content']['photo'];
@@ -319,42 +319,52 @@ class StringeeMessage {
       case MsgType.notification:
         Map<dynamic, dynamic> notifyMap = msgInfor['content'];
         this._notiContent = new Map<dynamic, dynamic>();
-        MsgNotifyType notifyType = (notifyMap['type'] as int).notifyType;
-        this._notiContent['type'] = notifyType;
+        MsgNotifyType? notifyType = (notifyMap['type'] as int).notifyType;
+        this._notiContent!['type'] = notifyType;
         switch (notifyType) {
           case MsgNotifyType.addParticipants:
-            StringeeUser user = new StringeeUser.fromJson(notifyMap['addedInfo']);
-            this._notiContent['addedby'] = user;
+            StringeeUser user =
+                new StringeeUser.fromJson(notifyMap['addedInfo']);
+            this._notiContent!['addedby'] = user;
             List<StringeeUser> participants = [];
             List<dynamic> participantArray = notifyMap['participants'];
             for (int i = 0; i < participantArray.length; i++) {
               StringeeUser user = StringeeUser.fromJson(participantArray[i]);
               participants.add(user);
             }
-            this._notiContent["participants"] = participants;
+            this._notiContent!["participants"] = participants;
             break;
           case MsgNotifyType.removeParticipants:
-            StringeeUser user = new StringeeUser.fromJson(notifyMap['removedInfo']);
-            this._notiContent['removedBy'] = user;
+            StringeeUser user =
+                new StringeeUser.fromJson(notifyMap['removedInfo']);
+            this._notiContent!['removedBy'] = user;
             List<StringeeUser> participants = [];
             List<dynamic> participantArray = notifyMap['participants'];
             for (int i = 0; i < participantArray.length; i++) {
               StringeeUser user = StringeeUser.fromJson(participantArray[i]);
               participants.add(user);
             }
-            this._notiContent["participants"] = participants;
+            this._notiContent!["participants"] = participants;
             break;
           case MsgNotifyType.changeGroupName:
-            this._notiContent['groupName'] = notifyMap['groupName'];
+            this._notiContent!['groupName'] = notifyMap['groupName'];
             break;
         }
         break;
+      default:
     }
     this._text = text;
   }
 
-  StringeeMessage.lstMsg(String msgId, String convId, MsgType msgType, String senderId,
-      int sequence, MsgState msgState, int createdAt, Map<dynamic, dynamic> msgInfor) {
+  StringeeMessage.lstMsg(
+      String? msgId,
+      String? convId,
+      MsgType? msgType,
+      String? senderId,
+      int? sequence,
+      MsgState? msgState,
+      int? createdAt,
+      Map<dynamic, dynamic>? msgInfor) {
     if (msgId == null ||
         msgType == null ||
         senderId == null ||
@@ -369,7 +379,8 @@ class StringeeMessage {
     this._senderId = senderId;
     this._createdAt = createdAt;
     this._sequence = sequence;
-    if (msgInfor.containsKey('metadata')) this._customData = msgInfor['metadata'];
+    if (msgInfor.containsKey('metadata'))
+      this._customData = msgInfor['metadata'];
     this._state = msgState;
     this._type = msgType;
     String text = '';
@@ -388,9 +399,9 @@ class StringeeMessage {
         }
 
         this._notiContent = new Map<dynamic, dynamic>();
-        this._notiContent["groupName"] = msgInfor['groupName'];
-        this._notiContent["creator"] = msgInfor['creator'];
-        this._notiContent["participants"] = participants;
+        this._notiContent!["groupName"] = msgInfor['groupName'];
+        this._notiContent!["creator"] = msgInfor['creator'];
+        this._notiContent!["participants"] = participants;
         break;
       case MsgType.photo:
         Map<dynamic, dynamic> photoMap = msgInfor['photo'];
@@ -436,68 +447,73 @@ class StringeeMessage {
         break;
       case MsgType.notification:
         this._notiContent = new Map<dynamic, dynamic>();
-        MsgNotifyType notifyType = (msgInfor['type'] as int).notifyType;
-        this._notiContent['type'] = notifyType;
+        MsgNotifyType? notifyType = (msgInfor['type'] as int).notifyType;
+        this._notiContent!['type'] = notifyType;
         switch (notifyType) {
           case MsgNotifyType.addParticipants:
-            StringeeUser user = new StringeeUser.fromJsonNotify(msgInfor['addedInfo']);
-            this._notiContent['addedby'] = user;
+            StringeeUser user =
+                new StringeeUser.fromJsonNotify(msgInfor['addedInfo']);
+            this._notiContent!['addedby'] = user;
             List<StringeeUser> participants = [];
             List<dynamic> participantArray = msgInfor['participants'];
             for (int i = 0; i < participantArray.length; i++) {
-              StringeeUser user = StringeeUser.fromJsonNotify(participantArray[i]);
+              StringeeUser user =
+                  StringeeUser.fromJsonNotify(participantArray[i]);
               participants.add(user);
             }
-            this._notiContent["participants"] = participants;
+            this._notiContent!["participants"] = participants;
             break;
           case MsgNotifyType.removeParticipants:
-            StringeeUser user = new StringeeUser.fromJsonNotify(msgInfor['removedInfo']);
-            this._notiContent['removedBy'] = user;
+            StringeeUser user =
+                new StringeeUser.fromJsonNotify(msgInfor['removedInfo']);
+            this._notiContent!['removedBy'] = user;
             List<StringeeUser> participants = [];
             List<dynamic> participantArray = msgInfor['participants'];
             for (int i = 0; i < participantArray.length; i++) {
-              StringeeUser user = StringeeUser.fromJsonNotify(participantArray[i]);
+              StringeeUser user =
+                  StringeeUser.fromJsonNotify(participantArray[i]);
               participants.add(user);
             }
-            this._notiContent["participants"] = participants;
+            this._notiContent!["participants"] = participants;
             break;
           case MsgNotifyType.changeGroupName:
-            this._notiContent['groupName'] = msgInfor['groupName'];
+            this._notiContent!['groupName'] = msgInfor['groupName'];
             break;
         }
         break;
+      default:
     }
     this._text = text;
   }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> params = new Map();
-    params['convId'] = _convId.trim();
-    params['type'] = _type.value;
+    params['convId'] = _convId?.trim();
+    params['type'] = _type?.value;
     if (_customData != null) params['customData'] = _customData;
     switch (this._type) {
       case MsgType.text:
       case MsgType.link:
-        params['text'] = _text.trim();
+        params['text'] = _text?.trim();
         break;
       case MsgType.photo:
-        if (_filePath != null) params['filePath'] = _filePath.trim();
-        if (_thumbnail != null) params['thumbnail'] = _thumbnail.trim();
+        if (_filePath != null) params['filePath'] = _filePath?.trim();
+        if (_thumbnail != null) params['thumbnail'] = _thumbnail?.trim();
         if (_ratio != null) params['ratio'] = _ratio;
         break;
       case MsgType.file:
-        if (_filePath != null) params['filePath'] = _filePath.trim();
-        if (_fileName != null) params['filename'] = _fileName.trim();
+        if (_filePath != null) params['filePath'] = _filePath?.trim();
+        if (_fileName != null) params['filename'] = _fileName?.trim();
         if (_fileLength != null) params['length'] = _fileLength;
         break;
       case MsgType.video:
-        if (_filePath != null) params['filePath'] = _filePath.trim();
-        if (_thumbnail != null) params['thumbnail'] = _thumbnail.trim();
+        if (_filePath != null) params['filePath'] = _filePath?.trim();
+        if (_thumbnail != null) params['thumbnail'] = _thumbnail?.trim();
         if (_ratio != null) params['ratio'] = _ratio;
         if (_duration != null) params['duration'] = _duration;
         break;
       case MsgType.audio:
-        if (_filePath != null) params['filePath'] = _filePath.trim();
+        if (_filePath != null) params['filePath'] = _filePath?.trim();
         if (_duration != null) params['duration'] = _duration;
         break;
       case MsgType.location:
@@ -505,12 +521,14 @@ class StringeeMessage {
         if (_longitude != null) params['lon'] = _longitude;
         break;
       case MsgType.contact:
-        if (_vcard != null) params['vcard'] = _vcard.trim();
+        if (_vcard != null) params['vcard'] = _vcard?.trim();
         break;
       case MsgType.sticker:
-        if (_stickerCategory != null) params['stickerCategory'] = _stickerCategory.trim();
-        if (_stickerName != null) params['stickerName'] = _stickerName.trim();
+        if (_stickerCategory != null)
+          params['stickerCategory'] = _stickerCategory?.trim();
+        if (_stickerName != null) params['stickerName'] = _stickerName?.trim();
         break;
+      default:
     }
     return params;
   }
@@ -519,7 +537,7 @@ class StringeeMessage {
   Future<Map<dynamic, dynamic>> edit(String content) async {
     assert(content != null || content.trim().isNotEmpty);
     final params = {
-      'convId': this._convId.trim(),
+      'convId': this._convId?.trim(),
       'msgId': this._id,
       'content': content,
     };
@@ -530,10 +548,11 @@ class StringeeMessage {
   Future<Map<dynamic, dynamic>> pinOrUnPin(bool pinOrUnPin) async {
     if (pinOrUnPin == null) return await reportInvalidValue('pinOrUnPin');
     final params = {
-      'convId': this._convId.trim(),
+      'convId': this._convId?.trim(),
       'msgId': this._id,
       'pinOrUnPin': pinOrUnPin,
     };
-    return await StringeeClient.methodChannel.invokeMethod('pinOrUnPin', params);
+    return await StringeeClient.methodChannel
+        .invokeMethod('pinOrUnPin', params);
   }
 }

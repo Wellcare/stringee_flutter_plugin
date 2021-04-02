@@ -23,9 +23,9 @@ class StringeeChange {
 
   ObjectType getType(StringeeObject object) {
     if (object is Conversation) {
-      return ObjectType.CONVERSATION;
+      return ObjectType.conversation;
     } else if (object is Message) {
-      return ObjectType.MESSAGE;
+      return ObjectType.message;
     } else {
       throw ArgumentError('Invalid object type: $object');
     }

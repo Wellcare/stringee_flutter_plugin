@@ -13,21 +13,21 @@ class StringeeVideoView extends StatefulWidget {
   bool isLocal = true;
   bool isOverlay = false;
   bool isMirror = false;
-  final EdgeInsetsGeometry margin;
-  final AlignmentGeometry alignment;
-  final EdgeInsetsGeometry padding;
-  ScalingType scalingType = ScalingType.fill;
-  final double height;
-  final double width;
-  final Color color;
-  final Widget child;
+  final EdgeInsetsGeometry? margin;
+  final AlignmentGeometry? alignment;
+  final EdgeInsetsGeometry? padding;
+  ScalingType? scalingType = ScalingType.fill;
+  final double? height;
+  final double? width;
+  final Color? color;
+  final Widget? child;
 
   StringeeVideoView(
     this.callId,
     this.isLocal, {
-    Key key,
-    this.isOverlay,
-    this.isMirror,
+    Key? key,
+    this.isOverlay = false,
+    this.isMirror = false,
     this.color,
     this.height,
     this.width,
@@ -77,7 +77,8 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
     }
 
     if (Platform.isAndroid) {
-      creationParams['isMirror'] = widget.isMirror == null ? false : widget.isMirror;
+      creationParams['isMirror'] =
+          widget.isMirror == null ? false : widget.isMirror;
     }
   }
 
@@ -86,10 +87,12 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
       case TargetPlatform.android:
         return PlatformViewLink(
           viewType: viewType,
-          surfaceFactory: (BuildContext context, PlatformViewController controller) {
-            return AndroidViewSurface(
+          surfaceFactory:
+              (BuildContext context, PlatformViewController controller) {
+            return PlatformViewSurface(
               controller: controller,
-              gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+              gestureRecognizers: const <
+                  Factory<OneSequenceGestureRecognizer>>{},
               hitTestBehavior: PlatformViewHitTestBehavior.opaque,
             );
           },
@@ -145,17 +148,17 @@ class StringeeVideoViewState extends State<StringeeVideoView> {
     );
 
     if (widget.child != null) {
-      Widget child = widget.child;
+      Widget child = widget.child!;
 
       if (widget.padding != null) {
-        child = Padding(padding: widget.padding, child: child);
+        child = Padding(padding: widget.padding!, child: child);
       }
 
       childrenWidget.add(child);
     }
 
     if (widget.alignment != null) {
-      current = Align(alignment: widget.alignment, child: current);
+      current = Align(alignment: widget.alignment!, child: current);
     }
 
     return current;
